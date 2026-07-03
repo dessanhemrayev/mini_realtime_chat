@@ -113,7 +113,6 @@ class ConnectionManager:
         if room_id in self.rooms:
             self.rooms[room_id]["messages"].append(
                 {
-                    "client_socket": websocket,
                     "message": message,
                     "timestamp": datetime.now(),
                 }
@@ -122,7 +121,6 @@ class ConnectionManager:
                 f"Сообщение добавлено в комнату {room_id}. "
                 f"Всего сообщений: {len(self.rooms[room_id]['messages'])}"
             )
-
     def get_room_messages(self, room_id: str) -> List[dict]:
         """
         Получить все сообщения комнаты.
