@@ -2,8 +2,8 @@
 
 Современный мини-чат приложение на **FastAPI** с поддержкой **WebSocket** для общения в реальном времени. Проект реализует лучшие практики и каноны FastAPI разработки.
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/Python-3.8+-3776ab?style=flat&logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.139.0-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776ab?style=flat&logo=python)](https://www.python.org/)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.24.0-00a85c?style=flat)](https://www.uvicorn.org/)
 [![WebSocket](https://img.shields.io/badge/WebSocket-RFC%206455-FF6B6B?style=flat)](https://tools.ietf.org/html/rfc6455)
 
@@ -22,7 +22,7 @@
 
 ## 📋 Требования
 
-- Python 3.8+
+- Python 3.10+
 - pip или Poetry
 
 ## 📂 Структура проекта
@@ -407,19 +407,20 @@ async def test_connect():
 
 | Пакет | Версия | Назначение |
 |-------|--------|-----------|
-| FastAPI | 0.104.1 | Веб-фреймворк |
+| FastAPI | 0.139.0 | Веб-фреймворк |
+| starlette | 1.3.1 | ASGI-ядро (зависимость FastAPI) |
 | uvicorn | 0.24.0 | ASGI сервер |
-| Pydantic | 2.5.0 | Валидация данных |
-| python-multipart | 0.0.6 | Парсинг форм |
+| Pydantic | 2.13.4 | Валидация данных |
+| python-multipart | 0.0.32 | Парсинг форм |
 | aiofiles | 23.2.1 | Асинхронная работа с файлами |
-| Jinja2 | 3.1.2 | Шаблонизатор |
-| python-dotenv | 1.0.0 | Загрузка .env переменных |
+| Jinja2 | 3.1.6 | Шаблонизатор |
+| python-dotenv | 1.2.2 | Загрузка .env переменных |
 
 ### Testing
 
 | Пакет | Версия | Назначение |
 |-------|--------|-----------|
-| pytest | 7.4.3 | Фреймворк для тестирования |
+| pytest | 9.1.1 | Фреймворк для тестирования |
 | pytest-asyncio | 0.21.1 | Поддержка async тестов |
 | httpx | 0.25.1 | HTTP клиент для тестов |
 | pytest-cov | 4.1.0 | Измерение покрытия кода |
@@ -428,7 +429,7 @@ async def test_connect():
 
 | Пакет | Версия | Назначение |
 |-------|--------|-----------|
-| black | 23.12.0 | Форматирование кода |
+| black | 26.3.1 | Форматирование кода |
 | isort | 5.13.2 | Сортировка импортов |
 | flake8 | 6.1.0 | Линтинг кода |
 | pylint | 3.0.3 | Анализ кода |
@@ -655,7 +656,7 @@ git push heroku main
 |----------|---------|---------|
 | **Tests** | Push/PR на main, dev | Запуск тестов на Python 3.10-3.12 и всех OS |
 | **Lint** | Push/PR на main, dev | Проверка кода: black, isort, flake8, mypy, pylint |
-| **Security** | Push/PR + еженедельно | Bandit, Safety, анализ зависимостей |
+| **Security** | Push/PR + еженедельно | Bandit, pip-audit, анализ зависимостей |
 | **Docker** | Push/PR + tags | Сборка и тест Docker образа |
 
 ### Тестирование при PR
@@ -687,14 +688,14 @@ pytest tests/ -v --cov=app
 
 # Проверить код
 black app tests
-isort app tests
+isort --profile black app tests
 flake8 app tests
 mypy app --ignore-missing-imports
 pylint app
 
 # Проверить безопасность
 bandit -r app
-safety check
+pip-audit -r requirements.txt
 ```
 
 Или используйте скрипт для запуска всех проверок:
