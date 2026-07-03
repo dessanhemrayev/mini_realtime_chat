@@ -645,15 +645,80 @@ git push heroku main
 
 Используйте docker-compose.prod.yml с Nginx и настройте SSL сертификаты
 
+## 🔄 CI/CD Pipeline (GitHub Actions)
+
+Проект использует GitHub Actions для автоматизации тестирования и контроля качества.
+
+### Workflows
+
+| Workflow | Триггер | Действия |
+|----------|---------|---------|
+| **Tests** | Push/PR на main, dev | Запуск тестов на Python 3.9-3.12 и всех OS |
+| **Lint** | Push/PR на main, dev | Проверка кода: black, isort, flake8, mypy, pylint |
+| **Security** | Push/PR + еженедельно | Bandit, Safety, анализ зависимостей |
+| **Docker** | Push/PR + tags | Сборка и тест Docker образа |
+
+### Тестирование при PR
+
+При создании Pull Request автоматически:
+
+✅ **Запускаются тесты** на всех версиях Python (3.9-3.12)  
+✅ **Проверяется код** на стиль и ошибки  
+✅ **Измеряется покрытие** тестами  
+✅ **Проверяется безопасность** зависимостей  
+✅ **Тестируется Docker** образ  
+
+### Бейджи статуса
+
+```markdown
+![Tests](https://github.com/dessanhemrayev/my_mini_chat/workflows/Tests/badge.svg)
+![Lint](https://github.com/dessanhemrayev/my_mini_chat/workflows/Lint%20and%20Code%20Quality/badge.svg)
+![Security](https://github.com/dessanhemrayev/my_mini_chat/workflows/Security/badge.svg)
+![Docker](https://github.com/dessanhemrayev/my_mini_chat/workflows/Docker%20Build/badge.svg)
+```
+
+### Локальное тестирование перед PR
+
+Перед тем как делать Push, рекомендуется локально запустить те же проверки:
+
+```bash
+# Запустить тесты
+pytest tests/ -v --cov=app
+
+# Проверить код
+black app tests
+isort app tests
+flake8 app tests
+mypy app --ignore-missing-imports
+pylint app
+
+# Проверить безопасность
+bandit -r app
+safety check
+```
+
+Или используйте скрипт для запуска всех проверок:
+
+```bash
+# Linux/Mac
+chmod +x run_tests.sh
+./run_tests.sh coverage
+
+# Windows
+run_tests.bat coverage
+```
+
 ## 🤝 Контрибьютинг
 
 Контрибьюции приветствуются! Пожалуйста:
 
 1. Форкните репозиторий
 2. Создайте ветку для вашей фичи (`git checkout -b feature/AmazingFeature`)
-3. Коммитьте изменения (`git commit -m 'Add some AmazingFeature'`)
-4. Пушьте в ветку (`git push origin feature/AmazingFeature`)
-5. Откройте Pull Request
+3. **Запустите локальные тесты** и проверки кода
+4. Коммитьте изменения (`git commit -m 'Add some AmazingFeature'`)
+5. Пушьте в ветку (`git push origin feature/AmazingFeature`)
+6. Откройте Pull Request
+7. Убедитесь что все GitHub Actions прошли успешно
 
 ## 📝 Лицензия
 
