@@ -2,7 +2,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
@@ -88,9 +88,12 @@ class ConnectionManager:
             logger.warning(f"Комната {room_id} не найдена при трансляции")
             return
 
+        # Снапшот списка пользователей для безопасной итерации
+        # (предотвращает race condition при конкурентном disconnect)
+        users_snapshot = list(self.rooms[room_id]["users"])
         disconnected_users = []
 
-        for connection in self.rooms[room_id]["users"]:
+        for connection in users_snapshot:
             try:
                 await connection.send_json(message)
             except Exception as e:
@@ -121,6 +124,7 @@ class ConnectionManager:
                 f"Сообщение добавлено в комнату {room_id}. "
                 f"Всего сообщений: {len(self.rooms[room_id]['messages'])}"
             )
+
     def get_room_messages(self, room_id: str) -> List[dict]:
         """
         Получить все сообщения комнаты.
@@ -135,7 +139,7 @@ class ConnectionManager:
             return self.rooms[room_id]["messages"]
         return []
 
-    def get_room_info(self, room_id: str) -> dict:
+    def get_room_info(self, room_id: str) -> Optional[dict]:
         """
         Получить информацию о комнате.
 

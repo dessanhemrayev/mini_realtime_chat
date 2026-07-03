@@ -104,6 +104,10 @@ class TestConnectionManager:
 
     def test_add_message(self):
         """Проверка добавления сообщения в историю."""
+        import json
+
+        from fastapi.encoders import jsonable_encoder
+
         manager = ConnectionManager()
         websocket = AsyncMock()
         message = {"text": "Hello"}
@@ -113,7 +117,14 @@ class TestConnectionManager:
         manager.add_message("room1", message, websocket)
 
         assert len(manager.rooms["room1"]["messages"]) == 1
-        assert manager.rooms["room1"]["messages"][0]["message"] == message
+        stored = manager.rooms["room1"]["messages"][0]
+        assert stored["message"] == message
+        # Проверяем, что сохраненное сообщение JSON-сериализуемо (как при
+        # отдаче через FastAPI, который применяет jsonable_encoder)
+        # и не содержит raw websocket/client_socket
+        json.dumps(jsonable_encoder(stored))
+        assert "client_socket" not in stored
+        assert "websocket" not in stored
 
     def test_get_room_messages(self):
         """Проверка получения сообщений комнаты."""

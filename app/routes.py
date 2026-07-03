@@ -22,7 +22,7 @@ from .config import (
     STATIC_DIR,
 )
 from .managers import ConnectionManager
-from .schemas import ChatMessageSchema, MessageData, SystemMessageSchema
+from .schemas import AuthorSchema, ChatMessageSchema, MessageData, SystemMessageSchema
 from .utils import get_hash
 
 logger = logging.getLogger(__name__)
@@ -182,14 +182,14 @@ async def websocket_endpoint(
                 send_date = datetime.now()
 
                 chat_message = ChatMessageSchema(
-                    author={
-                        "author_id": client_id,
-                        "name": message_data.name,
-                        "image": (
+                    author=AuthorSchema(
+                        author_id=client_id,
+                        name=message_data.name,
+                        image=(
                             f"/addres/users.account/avatar/{client_id}/"
                             f"{get_hash(message_data.text)}"
                         ),
-                    },
+                    ),
                     text=message_data.text,
                     day=send_date.strftime("%d.%m.%Y"),
                     time=send_date.strftime("%H:%M"),

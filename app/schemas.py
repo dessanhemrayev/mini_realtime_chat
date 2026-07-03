@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MessageData(BaseModel):
@@ -11,10 +11,11 @@ class MessageData(BaseModel):
     text: str = Field(..., min_length=1, max_length=5000, description="Текст сообщения")
     name: str = Field(..., min_length=1, max_length=100, description="Имя отправителя")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {"text": "Привет, это сообщение!", "name": "Иван"}
         }
+    )
 
 
 class AuthorSchema(BaseModel):
@@ -33,8 +34,8 @@ class ChatMessageSchema(BaseModel):
     day: str = Field(..., description="Дата (dd.mm.yyyy)")
     time: str = Field(..., description="Время (HH:MM)")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "author": {
                     "author_id": "user123",
@@ -46,6 +47,7 @@ class ChatMessageSchema(BaseModel):
                 "time": "14:30",
             }
         }
+    )
 
 
 class SystemMessageSchema(BaseModel):

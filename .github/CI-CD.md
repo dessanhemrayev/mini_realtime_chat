@@ -37,7 +37,7 @@
 **Конфигурация:**
 - Max line length: 120
 - Python version: 3.11
-- mypy, pylint выполняются с `continue-on-error: true`
+- mypy, pylint выполняются с обязательной проверкой: job упадёт при ошибках типов или рейтинге ниже 8.0
 
 ### 3. Security (.github/workflows/security.yml)
 
