@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 # Пути
 BASE_DIR = Path(__file__).parent.parent

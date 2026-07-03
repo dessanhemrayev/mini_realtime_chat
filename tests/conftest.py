@@ -2,6 +2,7 @@
 
 import pytest
 from fastapi.testclient import TestClient
+
 from app.managers import ConnectionManager
 
 
@@ -9,6 +10,7 @@ from app.managers import ConnectionManager
 def client():
     """Клиент для тестирования FastAPI приложения."""
     from main import app
+
     return TestClient(app)
 
 
@@ -33,7 +35,4 @@ def sample_client_id():
 @pytest.fixture
 def sample_message():
     """Пример сообщения."""
-    return {
-        "text": "Это тестовое сообщение",
-        "name": "Тестовый пользователь"
-    }
+    return {"text": "Это тестовое сообщение", "name": "Тестовый пользователь"}

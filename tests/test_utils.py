@@ -1,6 +1,5 @@
 """Тесты для утилит."""
 
-import pytest
 from app.utils import get_hash, instance_attributes
 
 
@@ -49,6 +48,7 @@ class TestInstanceAttributes:
 
     def test_simple_class(self):
         """Проверка получения атрибутов простого класса."""
+
         class SimpleClass:
             def __init__(self):
                 self.attr1 = "value1"
@@ -62,6 +62,7 @@ class TestInstanceAttributes:
 
     def test_empty_class(self):
         """Проверка получения атрибутов пустого класса."""
+
         class EmptyClass:
             pass
 
@@ -76,6 +77,7 @@ class TestInstanceAttributes:
 
     def test_slots_class(self):
         """Проверка класса со слотами."""
+
         class SlotsClass:
             __slots__ = ["attr1", "attr2"]
 

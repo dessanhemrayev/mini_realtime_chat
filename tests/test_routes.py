@@ -1,10 +1,8 @@
 """Тесты для API маршрутов."""
 
-import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-
 
 client = TestClient(app)
 
@@ -41,7 +39,11 @@ class TestAuthRoute:
         response = client.get("/")
         assert response.status_code == 200
         assert "text/html" in response.headers["content-type"]
-        assert "Mini Chat" in response.text or "Мини Чат" in response.text or "chat" in response.text.lower()
+        assert (
+            "Mini Chat" in response.text
+            or "Мини Чат" in response.text
+            or "chat" in response.text.lower()
+        )
 
     def test_get_chat_page(self):
         """Проверка получения страницы чата."""
@@ -106,7 +108,10 @@ class TestErrorHandling:
     def test_method_not_allowed(self):
         """Проверка обработки метода POST на GET маршруте."""
         response = client.post("/health")
-        assert response.status_code in [405, 422]  # Method Not Allowed или Validation Error
+        assert response.status_code in [
+            405,
+            422,
+        ]  # Method Not Allowed или Validation Error
 
 
 class TestRequestValidation:

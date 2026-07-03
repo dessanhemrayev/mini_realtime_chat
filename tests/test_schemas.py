@@ -3,7 +3,12 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas import MessageData, AuthorSchema, ChatMessageSchema, SystemMessageSchema
+from app.schemas import (
+    AuthorSchema,
+    ChatMessageSchema,
+    MessageData,
+    SystemMessageSchema,
+)
 
 
 class TestMessageData:
@@ -50,9 +55,7 @@ class TestAuthorSchema:
     def test_valid_author(self):
         """Проверка валидного автора."""
         author = AuthorSchema(
-            author_id="user123",
-            name="Иван",
-            image="/avatar/user123.jpg"
+            author_id="user123", name="Иван", image="/avatar/user123.jpg"
         )
         assert author.author_id == "user123"
         assert author.name == "Иван"
@@ -75,11 +78,11 @@ class TestChatMessageSchema:
             author={
                 "author_id": "user123",
                 "name": "Иван",
-                "image": "/avatar/user123.jpg"
+                "image": "/avatar/user123.jpg",
             },
             text="Привет!",
             day="03.07.2026",
-            time="14:30"
+            time="14:30",
         )
         assert msg.author.author_id == "user123"
         assert msg.text == "Привет!"
@@ -92,7 +95,7 @@ class TestChatMessageSchema:
             author={"author_id": "user123", "name": "Иван"},
             text="Test",
             day="03.07.2026",
-            time="14:30"
+            time="14:30",
         )
         msg_dict = dict(msg)
         assert isinstance(msg_dict, dict)

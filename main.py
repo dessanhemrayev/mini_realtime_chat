@@ -7,21 +7,18 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.routes import router
 from app.config import (
-    APP_TITLE,
     APP_DESCRIPTION,
+    APP_TITLE,
     APP_VERSION,
     CORS_ORIGINS,
+    LOG_FORMAT,
     LOG_LEVEL,
-    LOG_FORMAT
 )
+from app.routes import router
 
 # Настройка логирования
-logging.basicConfig(
-    level=LOG_LEVEL,
-    format=LOG_FORMAT
-)
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 
@@ -33,19 +30,16 @@ async def lifespan(app: FastAPI):
     """
     # Код при запуске
     logger.info(f"🚀 Запуск приложения {APP_TITLE} v{APP_VERSION}")
-    
+
     yield
-    
+
     # Код при завершении
     logger.info("🛑 Остановка приложения")
 
 
 # Инициализация FastAPI приложения
 app = FastAPI(
-    title=APP_TITLE,
-    description=APP_DESCRIPTION,
-    version=APP_VERSION,
-    lifespan=lifespan
+    title=APP_TITLE, description=APP_DESCRIPTION, version=APP_VERSION, lifespan=lifespan
 )
 
 # Middleware CORS
@@ -103,7 +97,7 @@ async def get_info():
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     logger.info("Запуск сервера...")
     uvicorn.run(
         "main:app",
