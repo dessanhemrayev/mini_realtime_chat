@@ -1,0 +1,60 @@
+name: Security
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5 # Обновлено до v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Заменил safety на pip-audit, так как safety теперь требует платный API-ключ
+        pip install bandit==1.7.9 pip-audit==2.7.3
+        # Устанавливаем зависимости проекта, чтобы pip-audit мог их проверить
+        pip install -r requirements.txt 
+
+    - name: Run Black (code formatter check)
+      run: black --check app tests
+
+    - name: Run isort (import sort check)
+      run: isort --check-only --profile black app tests
+
+    - name: Run flake8 (linter)
+      run: flake8 app tests --max-line-length=88 --extend-ignore=E203,W503
+
+    - name: Run Bandit security scanner
+      run: bandit -r app -f json -o bandit-report.json
+      # continue-on-error: true # Убрал, чтобы job падал при найденных уязвимостях в коде
+
+    - name: Check dependencies with pip-audit
+      # Проверяет установленные в окружении пакеты на известные уязвимости (CVE)
+      run: pip-audit --format json > pip-audit-report.json
+      # continue-on-error: true # Убрал, чтобы job падал при уязвимых зависимостях
+
+    - name: Upload Security reports
+      if: always()
+      uses: actions/upload-artifact@v4 # Обновлено до v4
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          pip-audit-report.json
+        retention-days: 30

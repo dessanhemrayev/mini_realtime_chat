@@ -1,0 +1,48 @@
+name: Lint and Code Quality
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5 # Обновлено до v5
+      with:
+        python-version: "3.11"
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Устанавливаем зависимости проекта, чтобы mypy/pylint могли разрешить импорты
+        pip install -r requirements.txt
+        # Зафиксированы версии, чтобы новые релизы линтеров внезапно не сломали CI
+        pip install black==24.4.2 isort==5.13.2 flake8==7.1.0 pylint==3.2.5 mypy==1.10.1
+
+    - name: Check code formatting with Black
+      run: black --check app tests
+
+    - name: Check import sorting with isort
+      run: isort --check-only --profile black app tests
+
+    - name: Lint with flake8
+      run: flake8 app tests --max-line-length=120 --extend-ignore=E203,W503
+
+    - name: Type checking with mypy
+      run: mypy app --ignore-missing-imports --no-implicit-optional
+      # continue-on-error: true # Закомментировано: теперь job упадет, если mypy найдет ошибки.
+
+    - name: Analyze code with Pylint
+      run: pylint app --fail-under=8.0 --disable=missing-docstring
+      # continue-on-error: true # Закомментировано: теперь job упадет, если рейтинг ниже 8.0.
