@@ -16,27 +16,33 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # Обновлено до v5
       with:
         python-version: "3.11"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install bandit safety
+        # Заменил safety на pip-audit, так как safety теперь требует платный API-ключ
+        pip install bandit pip-audit 
+        # Устанавливаем зависимости проекта, чтобы pip-audit мог их проверить
+        pip install -r requirements.txt 
 
     - name: Run Bandit security scanner
       run: bandit -r app -f json -o bandit-report.json
-      continue-on-error: true
+      # continue-on-error: true # Убрал, чтобы job падал при найденных уязвимостях в коде
 
-    - name: Check dependencies with Safety
-      run: safety check --json
-      continue-on-error: true
+    - name: Check dependencies with pip-audit
+      # Проверяет установленные в окружении пакеты на известные уязвимости (CVE)
+      run: pip-audit --format json > pip-audit-report.json
+      # continue-on-error: true # Убрал, чтобы job падал при уязвимых зависимостях
 
-    - name: Upload Bandit report
+    - name: Upload Security reports
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # Обновлено до v4
       with:
-        name: bandit-report
-        path: bandit-report.json
+        name: security-reports
+        path: |
+          bandit-report.json
+          pip-audit-report.json
         retention-days: 30

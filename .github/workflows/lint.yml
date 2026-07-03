@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # Обновлено до v5
       with:
         python-version: "3.11"
         cache: 'pip'
@@ -22,7 +22,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install black isort flake8 pylint mypy
+        # Зафиксированы версии, чтобы новые релизы линтеров внезапно не сломали CI
+        pip install black==24.4.2 isort==5.13.2 flake8==7.1.0 pylint==3.2.5 mypy==1.10.1
 
     - name: Check code formatting with Black
       run: black --check app tests
@@ -35,8 +36,8 @@ jobs:
 
     - name: Type checking with mypy
       run: mypy app --ignore-missing-imports --no-implicit-optional
-      continue-on-error: true
+      # continue-on-error: true # Закомментировано: теперь job упадет, если mypy найдет ошибки.
 
     - name: Analyze code with Pylint
       run: pylint app --fail-under=8.0 --disable=missing-docstring
-      continue-on-error: true
+      # continue-on-error: true # Закомментировано: теперь job упадет, если рейтинг ниже 8.0.
