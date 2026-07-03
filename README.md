@@ -653,7 +653,7 @@ git push heroku main
 
 | Workflow | Триггер | Действия |
 |----------|---------|---------|
-| **Tests** | Push/PR на main, dev | Запуск тестов на Python 3.9-3.12 и всех OS |
+| **Tests** | Push/PR на main, dev | Запуск тестов на Python 3.10-3.12 и всех OS |
 | **Lint** | Push/PR на main, dev | Проверка кода: black, isort, flake8, mypy, pylint |
 | **Security** | Push/PR + еженедельно | Bandit, Safety, анализ зависимостей |
 | **Docker** | Push/PR + tags | Сборка и тест Docker образа |
@@ -662,7 +662,7 @@ git push heroku main
 
 При создании Pull Request автоматически:
 
-✅ **Запускаются тесты** на всех версиях Python (3.9-3.12)  
+✅ **Запускаются тесты** на всех версиях Python (3.10-3.12)  
 ✅ **Проверяется код** на стиль и ошибки  
 ✅ **Измеряется покрытие** тестами  
 ✅ **Проверяется безопасность** зависимостей  
