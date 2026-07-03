@@ -28,6 +28,15 @@ jobs:
         # Устанавливаем зависимости проекта, чтобы pip-audit мог их проверить
         pip install -r requirements.txt 
 
+    - name: Run Black (code formatter check)
+      run: black --check app tests
+
+    - name: Run isort (import sort check)
+      run: isort --check-only --profile black app tests
+
+    - name: Run flake8 (linter)
+      run: flake8 app tests --max-line-length=88 --extend-ignore=E203,W503
+
     - name: Run Bandit security scanner
       run: bandit -r app -f json -o bandit-report.json
       # continue-on-error: true # Убрал, чтобы job падал при найденных уязвимостях в коде
