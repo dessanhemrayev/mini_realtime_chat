@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Вход в чат</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .container {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                max-width: 400px;
+                width: 100%;
+            }
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-top: 0;
+            }
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: #555;
+                font-weight: 500;
+            }
+            input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid #e0e0e0;
+                border-radius: 5px;
+                font-size: 1rem;
+                box-sizing: border-box;
+                transition: border-color 0.3s;
+            }
+            input:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+            button {
+                width: 100%;
+                padding: 0.75rem;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+            button:hover {
+                transform: translateY(-2px);
+            }
+            button:active {
+                transform: translateY(0);
+            }
+            .error {
+                color: #e74c3c;
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>💬 Мини Чат</h1>
+            <form onsubmit="enterChat(event)">
+                <div class="form-group">
+                    <label for="room_id">ID комнаты:</label>
+                    <input 
+                        type="text" 
+                        id="room_id" 
+                        placeholder="Например: room1" 
+                        required
+                        minlength="1"
+                        maxlength="100"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="user_id">Ваше имя:</label>
+                    <input 
+                        type="text" 
+                        id="user_id" 
+                        placeholder="Ваше имя" 
+                        required
+                        minlength="1"
+                        maxlength="100"
+                    />
+                </div>
+                <button type="submit">Войти в чат</button>
+            </form>
+            <div id="error" class="error"></div>
+        </div>
+
+        <script>
+            function enterChat(event) {
+                event.preventDefault();
+                
+                const roomId = document.getElementById("room_id").value.trim();
+                const userId = document.getElementById("user_id").value.trim();
+                const errorDiv = document.getElementById("error");
+                
+                if (!roomId || !userId) {
+                    errorDiv.textContent = "Пожалуйста, заполните все поля";
+                    return;
+                }
+                
+                // Перенаправляем в чат
+                window.location.href = `/room/${encodeURIComponent(roomId)}/${encodeURIComponent(userId)}`;
+            }
+        </script>
+    </body>
+</html>

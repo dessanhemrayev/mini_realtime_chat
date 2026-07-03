@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  mini-chat:
+    # Сборка образа
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_CONTEXT_KEEP_GIT_DIR=1
+
+    # Наименование контейнера
+    container_name: mini-chat-app
+
+    # Проброс портов: внешний:внутренний
+    ports:
+      - "8888:8888"
+
+    # Переменные окружения
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - LOG_LEVEL=INFO
+
+    # Монтирование томов для development
+    volumes:
+      # Для разработки - монтируем исходный код
+      - .:/app
+      # Исключаем __pycache__ и .git
+      - /app/__pycache__
+      - /app/.git
+
+    # Переопределение команды для development с reload
+    # Раскомментируйте для hot-reload во время разработки
+    # command: uvicorn main:app --host 0.0.0.0 --port 8888 --reload
+
+    # Проверка здоровья контейнера
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+    # Автоматический перезапуск при сбое
+    restart: unless-stopped
+
+    # Логирование
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "com.mini-chat.app=true"
+
+    # Network
+    networks:
+      - mini-chat-network
+
+    # Ресурсы
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+networks:
+  mini-chat-network:
+    driver: bridge
+    name: mini-chat-network
+
+volumes:
+  # Можно добавить named volumes если нужна БД
+  # mini-chat-data:
+  #   driver: local

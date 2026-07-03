@@ -1,0 +1,82 @@
+version: '3.9'
+
+services:
+  mini-chat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: mini-chat-prod
+
+    ports:
+      - "8888:8888"
+
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - LOG_LEVEL=WARNING
+
+    # В production не монтируем тома исходного кода
+    volumes:
+      # Только для логов, если нужно
+      - ./logs:/app/logs
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+    restart: always
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+        labels: "environment=production"
+
+    networks:
+      - mini-chat-prod-network
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 512M
+
+  # Опционально: Nginx для reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: mini-chat-nginx
+    
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # - ./ssl:/etc/nginx/ssl:ro  # Раскомментируйте для HTTPS
+
+    depends_on:
+      - mini-chat
+
+    networks:
+      - mini-chat-prod-network
+
+    restart: always
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  mini-chat-prod-network:
+    driver: bridge
+    name: mini-chat-prod-network
